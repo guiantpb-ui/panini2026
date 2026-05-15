@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Panini 2026">
+<meta name="theme-color" content="#080c14">
+<title>⚽ Panini FIFA 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c14;--surface:#0f1520;--card:#161e2e;--border:#1e2d44;--accent:#f5c518;--accent2:#e8452c;--green:#22c55e;--purple:#a78bfa;--text:#eef2ff;--muted:#607090;--r:10px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overscroll-behavior:none}
+#app{min-height:100vh;display:flex;flex-direction:column}
+
+/* HEADER */
+.header{background:linear-gradient(160deg,#080c14,#0d1a35 40%,#140818);border-bottom:2px solid var(--accent);padding:13px 16px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-title{font-family:'Bebas Neue',sans-serif;font-size:1.65rem;letter-spacing:3px;color:var(--accent);line-height:1;text-shadow:0 0 18px rgba(245,197,24,.35)}
+.logo-sub{font-size:.6rem;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px}
+.hstats{display:flex;gap:6px;flex-wrap:wrap}
+.sp{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;padding:4px 11px;font-size:.7rem;display:flex;align-items:center;gap:5px}
+.sp strong{font-size:.88rem}
+
+/* PROGRESS */
+.prog{background:var(--surface);padding:8px 16px;border-bottom:1px solid var(--border)}
+.ptop{display:flex;justify-content:space-between;font-size:.65rem;color:var(--muted);margin-bottom:4px}
+.ptop span:last-child{color:var(--accent);font-weight:700}
+.ptrack{height:5px;background:var(--border);border-radius:99px;overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:99px;transition:width .5s;box-shadow:0 0 8px rgba(245,197,24,.4)}
+
+/* TOOLBAR */
+.toolbar{padding:9px 16px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:58px;z-index:90}
+.si{flex:1;min-width:150px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:8px 11px;color:var(--text);font-family:inherit;font-size:.8rem;outline:none;transition:border-color .2s}
+.si::placeholder{color:var(--muted)}
+.si:focus{border-color:var(--accent)}
+.filters{display:flex;gap:5px;flex-wrap:wrap}
+.fb{padding:6px 11px;border-radius:var(--r);border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:inherit;font-size:.7rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.fb:hover{background:var(--border);color:var(--text)}
+.fb.on{background:var(--accent);color:#000;border-color:var(--accent)}
+
+/* MAIN */
+.main{flex:1;padding:16px;max-width:1300px;margin:0 auto;width:100%}
+.ts{margin-bottom:22px}
+.th{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.tn{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px}
+.tc .tn{color:var(--green)}
+.tp{display:flex;align-items:center;gap:6px;font-size:.65rem;color:var(--muted)}
+.mb{width:60px;height:3px;background:var(--border);border-radius:99px;overflow:hidden}
+.mbf{height:100%;background:var(--accent);border-radius:99px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:5px}
+
+/* STICKER */
+.s{border-radius:7px;border:1.5px solid var(--border);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .1s,border-color .1s,box-shadow .1s;position:relative;overflow:hidden;user-select:none;padding:5px 2px 4px;gap:1px;min-height:68px;-webkit-user-select:none}
+.s:active{transform:scale(.96)}
+.s.foil{background:linear-gradient(135deg,#1a1a2e,#0e1628);border-color:#8855ff55}
+.s.owned{background:linear-gradient(135deg,#0f2a18,#112212);border-color:var(--green);box-shadow:0 0 5px rgba(34,197,94,.2)}
+.s.repeated{background:linear-gradient(135deg,#2a0f10,#2e1212);border-color:var(--accent2);box-shadow:0 0 5px rgba(232,69,44,.2)}
+.sc{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:.5px;color:var(--muted);line-height:1}
+.s.owned .sc,.s.repeated .sc{color:var(--text)}
+.s.foil .sc{color:#c4a0ff}
+.sn{font-size:.4rem;color:var(--muted);text-align:center;padding:0 2px;line-height:1.25;max-width:100%}
+.s.owned .sn{color:#86efac}
+.s.repeated .sn{color:#fca5a5}
+.s.foil .sn{color:#c4a0ff}
+.bdg{position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.42rem;font-weight:700}
+.bok{background:var(--green);color:#000}
+.brep{background:var(--accent2);color:#fff}
+.fd{position:absolute;top:2px;left:2px;font-size:.45rem}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:200;padding:14px}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;width:100%;max-width:300px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.7)}
+.mc{font-family:'Bebas Neue',sans-serif;font-size:2.7rem;line-height:1}
+.mc.foil{background:linear-gradient(135deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.mc.normal{color:var(--accent);text-shadow:0 0 20px rgba(245,197,24,.3)}
+.mt{font-size:.65rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:2px 0 3px}
+.mp{font-size:.9rem;font-weight:600;margin-bottom:13px}
+.sb{font-size:.75rem;padding:8px 10px;border-radius:8px;background:var(--surface);margin-bottom:13px}
+.sb.ok{color:var(--green);border:1px solid var(--green)}
+.sb.rep{color:var(--accent2);border:1px solid var(--accent2)}
+.sb.miss{color:var(--muted);border:1px solid var(--border)}
+.mbtns{display:flex;flex-direction:column;gap:7px}
+.btn{padding:11px;border-radius:10px;border:none;font-family:inherit;font-size:.8rem;font-weight:700;cursor:pointer;transition:filter .15s;width:100%}
+.btn:active{filter:brightness(.9)}
+.bg{background:var(--green);color:#000}
+.br{background:var(--accent2);color:#fff}
+.bh{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted)}
+
+/* SAVE TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:#22c55e;color:#000;font-weight:700;font-size:.78rem;padding:10px 20px;border-radius:999px;z-index:300;transition:transform .3s ease,opacity .3s;opacity:0;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+.empty{text-align:center;padding:48px;color:var(--muted)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────────────────────────
+const RAW = `00|Logo Panini|Intro|F
+FWC1|Emblema Oficial 1|Intro|F
+FWC2|Emblema Oficial 2|Intro|F
+FWC3|Mascotas Oficiales|Intro|F
+FWC4|Slogan Oficial|Intro|F
+FWC5|Balón Oficial|Intro|F
+FWC6|Canadá - Sede|Intro|F
+FWC7|México - Sede|Intro|F
+FWC8|EE.UU. - Sede|Intro|F
+MEX1|Logo - México|México|F
+MEX2|Luis Malagón|México|
+MEX3|Johan Vásquez|México|
+MEX4|Jorge Sánchez|México|
+MEX5|César Montes|México|
+MEX6|Jesús Gallardo|México|
+MEX7|Israel Reyes|México|
+MEX8|Diego Lainez|México|
+MEX9|Carlos Rodríguez|México|
+MEX10|Edson Álvarez|México|
+MEX11|Orbelín Pineda|México|
+MEX12|Marcel Ruiz|México|
+MEX13|Foto Equipo|México|
+MEX14|Érick Sánchez|México|
+MEX15|Hirving Lozano|México|
+MEX16|Santiago Giménez|México|
+MEX17|Raúl Jiménez|México|
+MEX18|Alexis Vega|México|
+MEX19|Roberto Alvarado|México|
+MEX20|César Huerta|México|
+RSA1|Logo - Sudáfrica|Sudáfrica|F
+RSA2|Ronwen Williams|Sudáfrica|
+RSA3|Sipho Chaine|Sudáfrica|
+RSA4|Aubrey Modiba|Sudáfrica|
+RSA5|Samukele Kabini|Sudáfrica|
+RSA6|Mbekezeli Mbokazi|Sudáfrica|
+RSA7|Khulumani Ndamane|Sudáfrica|
+RSA8|Siyabonga Ngezana|Sudáfrica|
+RSA9|Khuliso Mudau|Sudáfrica|
+RSA10|Nkosinathi Sibisi|Sudáfrica|
+RSA11|Teboho Mokoena|Sudáfrica|
+RSA12|Thalente Mbatha|Sudáfrica|
+RSA13|Foto Equipo|Sudáfrica|
+RSA14|Bathasi Aubaas|Sudáfrica|
+RSA15|Yaya Sithole|Sudáfrica|
+RSA16|Sipho Mbule|Sudáfrica|
+RSA17|Lyle Foster|Sudáfrica|
+RSA18|Iqraam Rayners|Sudáfrica|
+RSA19|Mohau Nkota|Sudáfrica|
+RSA20|Oswin Appollis|Sudáfrica|
+KOR1|Logo - Corea del Sur|Corea del Sur|F
+KOR2|Hyeon-woo Jo|Corea del Sur|
+KOR3|Seung-Gyu Kim|Corea del Sur|
+KOR4|Min-jae Kim|Corea del Sur|
+KOR5|Yu-min Cho|Corea del Sur|
+KOR6|Young-woo Seol|Corea del Sur|
+KOR7|Han-beom Lee|Corea del Sur|
+KOR8|Tae-seok Lee|Corea del Sur|
+KOR9|Myung-jae Lee|Corea del Sur|
+KOR10|Jae-sung Lee|Corea del Sur|
+KOR11|In-beom Hwang|Corea del Sur|
+KOR12|Kang-in Lee|Corea del Sur|
+KOR13|Foto Equipo|Corea del Sur|
+KOR14|Seung-ho Paik|Corea del Sur|
+KOR15|Jens Castrop|Corea del Sur|
+KOR16|Dong-yeong Lee|Corea del Sur|
+KOR17|Gue-sung Cho|Corea del Sur|
+KOR18|Heung-min Son|Corea del Sur|
+KOR19|Hee-chan Hwang|Corea del Sur|
+KOR20|Hyeon-Gyu Oh|Corea del Sur|
+CZE1|Logo - Chequia|Chequia|F
+CZE2|Matej Kovar|Chequia|
+CZE3|Jindrich Stanek|Chequia|
+CZE4|Ladislav Krejci|Chequia|
+CZE5|Vladimir Coufal|Chequia|
+CZE6|Jaroslav Zeleny|Chequia|
+CZE7|Tomas Holes|Chequia|
+CZE8|David Zima|Chequia|
+CZE9|Michal Sadilek|Chequia|
+CZE10|Lukas Provod|Chequia|
+CZE11|Lukas Cerv|Chequia|
+CZE12|Tomas Soucek|Chequia|
+CZE13|Foto Equipo|Chequia|
+CZE14|Pavel Sulc|Chequia|
+CZE15|Matej Vydra|Chequia|
+CZE16|Vasil Kusej|Chequia|
+CZE17|Tomas Chory|Chequia|
+CZE18|Vaclav Cerny|Chequia|
+CZE19|Adam Hlozek|Chequia|
+CZE20|Patrik Schick|Chequia|
+CAN1|Logo - Canadá|Canadá|F
+CAN2|Dayne St.Clair|Canadá|
+CAN3|Alphonso Davies|Canadá|
+CAN4|Alistair Johnston|Canadá|
+CAN5|Samuel Adekugbe|Canadá|
+CAN6|Richie Laryea|Canadá|
+CAN7|Derek Cornelius|Canadá|
+CAN8|Moïse Bombito|Canadá|
+CAN9|Kamal Miller|Canadá|
+CAN10|Stephen Eustáquio|Canadá|
+CAN11|Ismaël Koné|Canadá|
+CAN12|Jonathan Osorio|Canadá|
+CAN13|Foto Equipo|Canadá|
+CAN14|Jacob Shaffelburg|Canadá|
+CAN15|Mathieu Choinière|Canadá|
+CAN16|Niko Sigur|Canadá|
+CAN17|Tajon Buchanan|Canadá|
+CAN18|Liam Millar|Canadá|
+CAN19|Cyle Larin|Canadá|
+CAN20|Jonathan David|Canadá|
+BIH1|Logo - Bosnia|Bosnia-Herz.|F
+BIH2|Nikola Vasilj|Bosnia-Herz.|
+BIH3|Amer Dedic|Bosnia-Herz.|
+BIH4|Sead Kolasinac|Bosnia-Herz.|
+BIH5|Tarik Muharemovic|Bosnia-Herz.|
+BIH6|Nihad Mujakic|Bosnia-Herz.|
+BIH7|Nikola Katic|Bosnia-Herz.|
+BIH8|Amir Hadziahmetovic|Bosnia-Herz.|
+BIH9|Benjamin Tahirovic|Bosnia-Herz.|
+BIH10|Armin Gigovic|Bosnia-Herz.|
+BIH11|Ivan Sunjic|Bosnia-Herz.|
+BIH12|Ivan Basic|Bosnia-Herz.|
+BIH13|Foto Equipo|Bosnia-Herz.|
+BIH14|Dzenis Burnic|Bosnia-Herz.|
+BIH15|Esmir Bajraktarevic|Bosnia-Herz.|
+BIH16|Amar Memic|Bosnia-Herz.|
+BIH17|Ermedin Demirovic|Bosnia-Herz.|
+BIH18|Edin Dzeko|Bosnia-Herz.|
+BIH19|Samed Bazdar|Bosnia-Herz.|
+BIH20|Haris Tabakovic|Bosnia-Herz.|
+QAT1|Logo - Qatar|Qatar|F
+QAT2|Meshaal Barsham|Qatar|
+QAT3|Sultan Albrake|Qatar|
+QAT4|Lucas Mendes|Qatar|
+QAT5|Homam Ahmed|Qatar|
+QAT6|Boualem Khoukhi|Qatar|
+QAT7|Pedro Miguel|Qatar|
+QAT8|Tarek Salman|Qatar|
+QAT9|Mohamed Al-Mannai|Qatar|
+QAT10|Karim Boudiaf|Qatar|
+QAT11|Assim Madibo|Qatar|
+QAT12|Ahmed Fatehi|Qatar|
+QAT13|Foto Equipo|Qatar|
+QAT14|Mohammed Waad|Qatar|
+QAT15|Abdulaziz Hatem|Qatar|
+QAT16|Hassan Al-Haydos|Qatar|
+QAT17|Edmilson Junior|Qatar|
+QAT18|Akram Hassan Afif|Qatar|
+QAT19|Ahmed Al Ganehi|Qatar|
+QAT20|Almoez Ali|Qatar|
+SUI1|Logo - Suiza|Suiza|F
+SUI2|Gregor Kobel|Suiza|
+SUI3|Yvon Mvogo|Suiza|
+SUI4|Manuel Akanji|Suiza|
+SUI5|Ricardo Rodriguez|Suiza|
+SUI6|Nico Elvedi|Suiza|
+SUI7|Aurèle Amenda|Suiza|
+SUI8|Silvan Widmer|Suiza|
+SUI9|Granit Xhaka|Suiza|
+SUI10|Denis Zakaria|Suiza|
+SUI11|Remo Freuler|Suiza|
+SUI12|Fabian Rieder|Suiza|
+SUI13|Foto Equipo|Suiza|
+SUI14|Ardon Jashari|Suiza|
+SUI15|Johan Manzambi|Suiza|
+SUI16|Michel Aebischer|Suiza|
+SUI17|Breel Embolo|Suiza|
+SUI18|Ruben Vargas|Suiza|
+SUI19|Dan Ndoye|Suiza|
+SUI20|Zeki Amdouni|Suiza|
+BRA1|Logo - Brasil|Brasil|F
+BRA2|Alisson|Brasil|
+BRA3|Bento|Brasil|
+BRA4|Marquinhos|Brasil|
+BRA5|Éder Militão|Brasil|
+BRA6|Gabriel Magalhães|Brasil|
+BRA7|Danilo|Brasil|
+BRA8|Wesley|Brasil|
+BRA9|Lucas Paquetá|Brasil|
+BRA10|Casemiro|Brasil|
+BRA11|Bruno Guimarães|Brasil|
+BRA12|Luiz Henrique|Brasil|
+BRA13|Foto Equipo|Brasil|
+BRA14|Vinícius Júnior|Brasil|
+BRA15|Rodrygo|Brasil|
+BRA16|João Pedro|Brasil|
+BRA17|Matheus Cunha|Brasil|
+BRA18|Gabriel Martinelli|Brasil|
+BRA19|Raphinha|Brasil|
+BRA20|Estévão|Brasil|
+MAR1|Logo - Marruecos|Marruecos|F
+MAR2|Yassine Bounou|Marruecos|
+MAR3|Munir El Kajoui|Marruecos|
+MAR4|Achraf Hakimi|Marruecos|
+MAR5|Noussair Mazraoui|Marruecos|
+MAR6|Nayef Aguerd|Marruecos|
+MAR7|Roman Saiss|Marruecos|
+MAR8|Jawad El Yamiq|Marruecos|
+MAR9|Adam Masina|Marruecos|
+MAR10|Sofyan Amrabat|Marruecos|
+MAR11|Azzedine Ounahi|Marruecos|
+MAR12|Eliesse Ben Seghir|Marruecos|
+MAR13|Foto Equipo|Marruecos|
+MAR14|Bilal El Khannouss|Marruecos|
+MAR15|Ismael Saibari|Marruecos|
+MAR16|Youssef En-Nesyri|Marruecos|
+MAR17|Abde Ezzalzouli|Marruecos|
+MAR18|Soufiane Rahimi|Marruecos|
+MAR19|Brahim Diaz|Marruecos|
+MAR20|Ayoub El Kaabi|Marruecos|
+HAI1|Logo - Haití|Haití|F
+HAI2|Johny Placide|Haití|
+HAI3|Carlens Arcus|Haití|
+HAI4|Martin Expérience|Haití|
+HAI5|Jean-Kevin Duverne|Haití|
+HAI6|Ricardo Adé|Haití|
+HAI7|Duke Lacroix|Haití|
+HAI8|Garven Metusala|Haití|
+HAI9|Hannes Delcroix|Haití|
+HAI10|Leverton Pierre|Haití|
+HAI11|Danley Jean Jacques|Haití|
+HAI12|Jean-Ricner Bellegarde|Haití|
+HAI13|Foto Equipo|Haití|
+HAI14|Christopher Attys|Haití|
+HAI15|Derrick Etienne Jr.|Haití|
+HAI16|Josue Casimir|Haití|
+HAI17|Ruben Providence|Haití|
+HAI18|Duckens Nazon|Haití|
+HAI19|Louicius Deedson|Haití|
+HAI20|Frantzdy Pierrot|Haití|
+SCO1|Logo - Escocia|Escocia|F
+SCO2|Angus Gunn|Escocia|
+SCO3|Jack Hendry|Escocia|
+SCO4|Kieran Tierney|Escocia|
+SCO5|Aaron Hickey|Escocia|
+SCO6|Andrew Robertson|Escocia|
+SCO7|Scott McKenna|Escocia|
+SCO8|John Souttar|Escocia|
+SCO9|Anthony Ralston|Escocia|
+SCO10|Grant Hanley|Escocia|
+SCO11|Scott McTominay|Escocia|
+SCO12|Billy Gilmour|Escocia|
+SCO13|Foto Equipo|Escocia|
+SCO14|Lewis Ferguson|Escocia|
+SCO15|Ryan Christie|Escocia|
+SCO16|Kenny McLean|Escocia|
+SCO17|John McGinn|Escocia|
+SCO18|Lyndon Dykes|Escocia|
+SCO19|Che Adams|Escocia|
+SCO20|Ben Doak|Escocia|
+USA1|Logo - EE.UU.|EE.UU.|F
+USA2|Matt Freese|EE.UU.|
+USA3|Chris Richards|EE.UU.|
+USA4|Tim Ream|EE.UU.|
+USA5|Mark McKenzie|EE.UU.|
+USA6|Alex Freeman|EE.UU.|
+USA7|Antonee Robinson|EE.UU.|
+USA8|Tyler Adams|EE.UU.|
+USA9|Tanner Tessmann|EE.UU.|
+USA10|Weston McKennie|EE.UU.|
+USA11|Christian Roldan|EE.UU.|
+USA12|Timothy Weah|EE.UU.|
+USA13|Foto Equipo|EE.UU.|
+USA14|Diego Luna|EE.UU.|
+USA15|Malik Tillman|EE.UU.|
+USA16|Christian Pulisic|EE.UU.|
+USA17|Brenden Aaronson|EE.UU.|
+USA18|Ricardo Pepi|EE.UU.|
+USA19|Haji Wright|EE.UU.|
+USA20|Folarin Balogun|EE.UU.|
+PAR1|Logo - Paraguay|Paraguay|F
+PAR2|Roberto Fernandez|Paraguay|
+PAR3|Orlando Gill|Paraguay|
+PAR4|Gustavo Gomez|Paraguay|
+PAR5|Fabián Balbuena|Paraguay|
+PAR6|Juan José Cáceres|Paraguay|
+PAR7|Omar Alderete|Paraguay|
+PAR8|Junior Alonso|Paraguay|
+PAR9|Mathías Villasanti|Paraguay|
+PAR10|Diego Gomez|Paraguay|
+PAR11|Damián Bobadilla|Paraguay|
+PAR12|Andres Cubas|Paraguay|
+PAR13|Foto Equipo|Paraguay|
+PAR14|Matias Galarza|Paraguay|
+PAR15|Julio Enciso|Paraguay|
+PAR16|Alejandro Romero|Paraguay|
+PAR17|Miguel Almirón|Paraguay|
+PAR18|Ramon Sosa|Paraguay|
+PAR19|Angel Romero|Paraguay|
+PAR20|Antonio Sanabria|Paraguay|
+AUS1|Logo - Australia|Australia|F
+AUS2|Mathew Ryan|Australia|
+AUS3|Joe Gauci|Australia|
+AUS4|Harry Souttar|Australia|
+AUS5|Alessandro Circati|Australia|
+AUS6|Jordan Bos|Australia|
+AUS7|Aziz Behich|Australia|
+AUS8|Cameron Burgess|Australia|
+AUS9|Lewis Miller|Australia|
+AUS10|Milos Degenek|Australia|
+AUS11|Jackson Irvine|Australia|
+AUS12|Riley McGree|Australia|
+AUS13|Foto Equipo|Australia|
+AUS14|Aiden O'Neill|Australia|
+AUS15|Connor Metcalfe|Australia|
+AUS16|Patrick Yazbek|Australia|
+AUS17|Craig Goodwin|Australia|
+AUS18|Kusini Vengi|Australia|
+AUS19|Nestory Irankunda|Australia|
+AUS20|Mohamed Touré|Australia|
+TUR1|Logo - Turquía|Turquía|F
+TUR2|Ugurcan Cakir|Turquía|
+TUR3|Mert Muldur|Turquía|
+TUR4|Zeki Celik|Turquía|
+TUR5|Abdulkerim Bardakci|Turquía|
+TUR6|Caglar Soyuncu|Turquía|
+TUR7|Merih Demiral|Turquía|
+TUR8|Ferdi Kadioglu|Turquía|
+TUR9|Kaan Ayhan|Turquía|
+TUR10|Ismail Yuksek|Turquía|
+TUR11|Hakan Calhanoglu|Turquía|
+TUR12|Orkun Kokcu|Turquía|
+TUR13|Foto Equipo|Turquía|
+TUR14|Arda Guler|Turquía|
+TUR15|Irfan Can Kahveci|Turquía|
+TUR16|Yunus Akgun|Turquía|
+TUR17|Can Uzun|Turquía|
+TUR18|Baris Alper Yilmaz|Turquía|
+TUR19|Kerem Akturkoglu|Turquía|
+TUR20|Kenan Yildiz|Turquía|
+GER1|Logo - Alemania|Alemania|F
+GER2|Marc-André ter Stegen|Alemania|
+GER3|Jonathan Tah|Alemania|
+GER4|David Raum|Alemania|
+GER5|Nico Schlotterbeck|Alemania|
+GER6|Antonio Rüdiger|Alemania|
+GER7|Waldemar Anton|Alemania|
+GER8|Ridle Baku|Alemania|
+GER9|Maximilian Mittelstadt|Alemania|
+GER10|Joshua Kimmich|Alemania|
+GER11|Florian Wirtz|Alemania|
+GER12|Felix Nmecha|Alemania|
+GER13|Foto Equipo|Alemania|
+GER14|Leon Goretzka|Alemania|
+GER15|Jamal Musiala|Alemania|
+GER16|Serge Gnabry|Alemania|
+GER17|Kai Havertz|Alemania|
+GER18|Leroy Sane|Alemania|
+GER19|Karim Adeyemi|Alemania|
+GER20|Nick Woltemade|Alemania|
+CUW1|Logo - Curazao|Curazao|F
+CUW2|Eloy Room|Curazao|
+CUW3|Armando Obispo|Curazao|
+CUW4|Sherel Floranus|Curazao|
+CUW5|Jurien Gaari|Curazao|
+CUW6|Joshua Brenet|Curazao|
+CUW7|Roshon Van Eijma|Curazao|
+CUW8|Shurandy Sambo|Curazao|
+CUW9|Livano Comenencia|Curazao|
+CUW10|Godfried Roemeratoe|Curazao|
+CUW11|Juninho Bacuna|Curazao|
+CUW12|Leandro Bacuna|Curazao|
+CUW13|Foto Equipo|Curazao|
+CUW14|Tahith Chong|Curazao|
+CUW15|Kenji Gorre|Curazao|
+CUW16|Jearl Margaritha|Curazao|
+CUW17|Jurgen Locadia|Curazao|
+CUW18|Jeremy Antonisse|Curazao|
+CUW19|Gervane Kastaneer|Curazao|
+CUW20|Sontje Hansen|Curazao|
+CIV1|Logo - Costa de Marfil|Costa de Marfil|F
+CIV2|Yahia Fofana|Costa de Marfil|
+CIV3|Ghislain Konan|Costa de Marfil|
+CIV4|Wilfried Singo|Costa de Marfil|
+CIV5|Odilon Kossounou|Costa de Marfil|
+CIV6|Evan Ndicka|Costa de Marfil|
+CIV7|Willy Boly|Costa de Marfil|
+CIV8|Emmanuel Agbadou|Costa de Marfil|
+CIV9|Ousmane Diomande|Costa de Marfil|
+CIV10|Franck Kessie|Costa de Marfil|
+CIV11|Seko Fofana|Costa de Marfil|
+CIV12|Ibrahim Sangare|Costa de Marfil|
+CIV13|Foto Equipo|Costa de Marfil|
+CIV14|Jean-Philippe Gbamin|Costa de Marfil|
+CIV15|Amad Diallo|Costa de Marfil|
+CIV16|Sébastien Haller|Costa de Marfil|
+CIV17|Simon Adingra|Costa de Marfil|
+CIV18|Yan Diomande|Costa de Marfil|
+CIV19|Evann Guessand|Costa de Marfil|
+CIV20|Oumar Diakite|Costa de Marfil|
+ECU1|Logo - Ecuador|Ecuador|F
+ECU2|Hernán Galíndez|Ecuador|
+ECU3|Gonzalo Valle|Ecuador|
+ECU4|Piero Hincapié|Ecuador|
+ECU5|Pervis Estupiñán|Ecuador|
+ECU6|Willian Pacho|Ecuador|
+ECU7|Ángelo Preciado|Ecuador|
+ECU8|Joel Ordóñez|Ecuador|
+ECU9|Moisés Caicedo|Ecuador|
+ECU10|Alan Franco|Ecuador|
+ECU11|Kendry Páez|Ecuador|
+ECU12|Pedro Vite|Ecuador|
+ECU13|Foto Equipo|Ecuador|
+ECU14|John Yeboah|Ecuador|
+ECU15|Leonardo Campana|Ecuador|
+ECU16|Gonzalo Plata|Ecuador|
+ECU17|Nilson Angulo|Ecuador|
+ECU18|Alan Minda|Ecuador|
+ECU19|Kevin Rodríguez|Ecuador|
+ECU20|Enner Valencia|Ecuador|
+NED1|Logo - Países Bajos|Países Bajos|F
+NED2|Bart Verbruggen|Países Bajos|
+NED3|Virgil van Dijk|Países Bajos|
+NED4|Micky van de Ven|Países Bajos|
+NED5|Jurrien Timber|Países Bajos|
+NED6|Denzel Dumfries|Países Bajos|
+NED7|Nathan Aké|Países Bajos|
+NED8|Jeremie Frimpong|Países Bajos|
+NED9|Jan Paul van Hecke|Países Bajos|
+NED10|Tijjani Reijnders|Países Bajos|
+NED11|Ryan Gravenberch|Países Bajos|
+NED12|Teun Koopmeiners|Países Bajos|
+NED13|Foto Equipo|Países Bajos|
+NED14|Frenkie de Jong|Países Bajos|
+NED15|Xavi Simons|Países Bajos|
+NED16|Justin Kluivert|Países Bajos|
+NED17|Memphis Depay|Países Bajos|
+NED18|Donyell Malen|Países Bajos|
+NED19|Wout Weghorst|Países Bajos|
+NED20|Cody Gakpo|Países Bajos|
+JPN1|Logo - Japón|Japón|F
+JPN2|Zion Suzuki|Japón|
+JPN3|Henry Mochizuki|Japón|
+JPN4|Ayumu Seko|Japón|
+JPN5|Junnosuke Suzuki|Japón|
+JPN6|Shogo Taniguchi|Japón|
+JPN7|Tsuyoshi Watanabe|Japón|
+JPN8|Kaishu Sano|Japón|
+JPN9|Yuki Soma|Japón|
+JPN10|Ao Tanaka|Japón|
+JPN11|Daichi Kamada|Japón|
+JPN12|Takefusa Kubo|Japón|
+JPN13|Foto Equipo|Japón|
+JPN14|Ritsu Doan|Japón|
+JPN15|Keito Nakamura|Japón|
+JPN16|Takumi Minamino|Japón|
+JPN17|Shuto Machino|Japón|
+JPN18|Junya Ito|Japón|
+JPN19|Koki Ogawa|Japón|
+JPN20|Ayase Ueda|Japón|
+SWE1|Logo - Suecia|Suecia|F
+SWE2|Victor Johansson|Suecia|
+SWE3|Isak Hien|Suecia|
+SWE4|Gabriel Gudmundsson|Suecia|
+SWE5|Emil Holm|Suecia|
+SWE6|Victor Lindelöf|Suecia|
+SWE7|Gustaf Lagerbielke|Suecia|
+SWE8|Lucas Bergvall|Suecia|
+SWE9|Hugo Larsson|Suecia|
+SWE10|Jesper Karlström|Suecia|
+SWE11|Yasin Ayari|Suecia|
+SWE12|Mattias Svanberg|Suecia|
+SWE13|Foto Equipo|Suecia|
+SWE14|Daniel Svensson|Suecia|
+SWE15|Ken Sema|Suecia|
+SWE16|Roony Bardghji|Suecia|
+SWE17|Dejan Kulusevski|Suecia|
+SWE18|Anthony Elanga|Suecia|
+SWE19|Alexander Isak|Suecia|
+SWE20|Viktor Gyökeres|Suecia|
+TUN1|Logo - Túnez|Túnez|F
+TUN2|Bechir Ben Said|Túnez|
+TUN3|Aymen Dahmen|Túnez|
+TUN4|Yan Valery|Túnez|
+TUN5|Montassar Talbi|Túnez|
+TUN6|Yassine Meriah|Túnez|
+TUN7|Ali Abdi|Túnez|
+TUN8|Dylan Bronn|Túnez|
+TUN9|Ellyes Skhiri|Túnez|
+TUN10|Aissa Laidouni|Túnez|
+TUN11|Ferjani Sassi|Túnez|
+TUN12|M.A. Ben Romdhane|Túnez|
+TUN13|Foto Equipo|Túnez|
+TUN14|Hannibal Mejbri|Túnez|
+TUN15|Elias Achouri|Túnez|
+TUN16|Elias Saad|Túnez|
+TUN17|Hazem Mastouri|Túnez|
+TUN18|Ismael Gharbi|Túnez|
+TUN19|Sayfallah Ltaief|Túnez|
+TUN20|Naim Sliti|Túnez|
+BEL1|Logo - Bélgica|Bélgica|F
+BEL2|Thibaut Courtois|Bélgica|
+BEL3|Arthur Theate|Bélgica|
+BEL4|Timothy Castagne|Bélgica|
+BEL5|Zeno Debast|Bélgica|
+BEL6|Brandon Mechele|Bélgica|
+BEL7|Maxim De Cuyper|Bélgica|
+BEL8|Thomas Meunier|Bélgica|
+BEL9|Youri Tielemans|Bélgica|
+BEL10|Amadou Onana|Bélgica|
+BEL11|Nicolas Raskin|Bélgica|
+BEL12|Alexis Saelemaekers|Bélgica|
+BEL13|Foto Equipo|Bélgica|
+BEL14|Hans Vanaken|Bélgica|
+BEL15|Kevin De Bruyne|Bélgica|
+BEL16|Jérémy Doku|Bélgica|
+BEL17|Charles De Ketelaere|Bélgica|
+BEL18|Leandro Trossard|Bélgica|
+BEL19|Loïs Openda|Bélgica|
+BEL20|Romelu Lukaku|Bélgica|
+EGY1|Logo - Egipto|Egipto|F
+EGY2|Mohamed El Shenawy|Egipto|
+EGY3|Mohamed Hany|Egipto|
+EGY4|Mohamed Hamdy|Egipto|
+EGY5|Yasser Ibrahim|Egipto|
+EGY6|Khaled Sobhi|Egipto|
+EGY7|Ramy Rabia|Egipto|
+EGY8|Hossam Abdelmaguid|Egipto|
+EGY9|Ahmed Fatouh|Egipto|
+EGY10|Marwan Attia|Egipto|
+EGY11|Zizo|Egipto|
+EGY12|Hamdy Fathy|Egipto|
+EGY13|Foto Equipo|Egipto|
+EGY14|Mohamed Lasheen|Egipto|
+EGY15|Emam Ashour|Egipto|
+EGY16|Osama Faisal|Egipto|
+EGY17|Mohamed Salah|Egipto|
+EGY18|Mostafa Mohamed|Egipto|
+EGY19|Trezeguet|Egipto|
+EGY20|Omar Marmoush|Egipto|
+IRN1|Logo - Irán|Irán|F
+IRN2|Alireza Beiranvand|Irán|
+IRN3|Morteza Pouraliganji|Irán|
+IRN4|Ehsan Hajsafi|Irán|
+IRN5|Milad Mohammadi|Irán|
+IRN6|Shojae Khalilzadeh|Irán|
+IRN7|Ramin Rezaeian|Irán|
+IRN8|Hossein Kanaani|Irán|
+IRN9|Sadegh Moharrami|Irán|
+IRN10|Saleh Hardani|Irán|
+IRN11|Saeed Ezatolahi|Irán|
+IRN12|Saman Ghoddos|Irán|
+IRN13|Foto Equipo|Irán|
+IRN14|Omid Noorafkan|Irán|
+IRN15|Roozbeh Cheshmi|Irán|
+IRN16|Mohammad Mohebi|Irán|
+IRN17|Sardar Azmoun|Irán|
+IRN18|Mehdi Taremi|Irán|
+IRN19|Alireza Jahanbakhsh|Irán|
+IRN20|Ali Gholizadeh|Irán|
+NZL1|Logo - Nueva Zelanda|Nueva Zelanda|F
+NZL2|Max Crocombe|Nueva Zelanda|
+NZL3|Alex Paulsen|Nueva Zelanda|
+NZL4|Michael Boxall|Nueva Zelanda|
+NZL5|Liberato Cacace|Nueva Zelanda|
+NZL6|Tim Payne|Nueva Zelanda|
+NZL7|Tyler Bindon|Nueva Zelanda|
+NZL8|Francis de Vries|Nueva Zelanda|
+NZL9|Finn Surman|Nueva Zelanda|
+NZL10|Joe Bell|Nueva Zelanda|
+NZL11|Sarpreet Singh|Nueva Zelanda|
+NZL12|Ryan Thomas|Nueva Zelanda|
+NZL13|Foto Equipo|Nueva Zelanda|
+NZL14|Matthew Garbett|Nueva Zelanda|
+NZL15|Marko Stamenić|Nueva Zelanda|
+NZL16|Ben Old|Nueva Zelanda|
+NZL17|Chris Wood|Nueva Zelanda|
+NZL18|Elijah Just|Nueva Zelanda|
+NZL19|Callum McCowatt|Nueva Zelanda|
+NZL20|Kosta Barbarouses|Nueva Zelanda|
+ESP1|Logo - España|España|F
+ESP2|Unai Simón|España|
+ESP3|Robin Le Normand|España|
+ESP4|Aymeric Laporte|España|
+ESP5|Dean Huijsen|España|
+ESP6|Pedro Porro|España|
+ESP7|Dani Carvajal|España|
+ESP8|Marc Cucurella|España|
+ESP9|Martín Zubimendi|España|
+ESP10|Rodri|España|
+ESP11|Pedri|España|
+ESP12|Fabián Ruiz|España|
+ESP13|Foto Equipo|España|
+ESP14|Mikel Merino|España|
+ESP15|Lamine Yamal|España|
+ESP16|Dani Olmo|España|
+ESP17|Nico Williams|España|
+ESP18|Ferran Torres|España|
+ESP19|Álvaro Morata|España|
+ESP20|Mikel Oyarzabal|España|
+CPV1|Logo - Cabo Verde|Cabo Verde|F
+CPV2|Vozinha|Cabo Verde|
+CPV3|Logan Costa|Cabo Verde|
+CPV4|Pico|Cabo Verde|
+CPV5|Diney|Cabo Verde|
+CPV6|Steven Moreira|Cabo Verde|
+CPV7|Wagner Pina|Cabo Verde|
+CPV8|Joao Paulo|Cabo Verde|
+CPV9|Yannick Semedo|Cabo Verde|
+CPV10|Kevin Pina|Cabo Verde|
+CPV11|Patrick Andrade|Cabo Verde|
+CPV12|Jamiro Monteiro|Cabo Verde|
+CPV13|Foto Equipo|Cabo Verde|
+CPV14|Deroy Duarte|Cabo Verde|
+CPV15|Garry Rodrigues|Cabo Verde|
+CPV16|Julio Tavares|Cabo Verde|
+CPV17|Ryan Mendes|Cabo Verde|
+CPV18|Ze Lopes|Cabo Verde|
+CPV19|Djaniny|Cabo Verde|
+CPV20|Carlos Ponck|Cabo Verde|
+ALG1|Logo - Argelia|Argelia|F
+ALG2|Rais M'Bolhi|Argelia|
+ALG3|Alexandre Oukidja|Argelia|
+ALG4|Ramy Bensebaini|Argelia|
+ALG5|Aïssa Mandi|Argelia|
+ALG6|Djamel Benlamri|Argelia|
+ALG7|Youcef Atal|Argelia|
+ALG8|Hichem Boudaoui|Argelia|
+ALG9|Adlene Guedioura|Argelia|
+ALG10|Ismael Bennacer|Argelia|
+ALG11|Ramiz Zerrouki|Argelia|
+ALG12|Sofiane Feghouli|Argelia|
+ALG13|Foto Equipo|Argelia|
+ALG14|Mehdi Zerkane|Argelia|
+ALG15|Youcef Belaili|Argelia|
+ALG16|Riyad Mahrez|Argelia|
+ALG17|Baghdad Bounedjah|Argelia|
+ALG18|Islam Slimani|Argelia|
+ALG19|Said Benrahma|Argelia|
+ALG20|Djamel Benlamri (2)|Argelia|
+ARG1|Logo - Argentina|Argentina|F
+ARG2|Emiliano Martínez|Argentina|
+ARG3|Geronimo Rulli|Argentina|
+ARG4|Nahuel Molina|Argentina|
+ARG5|Cristian Romero|Argentina|
+ARG6|Lisandro Martínez|Argentina|
+ARG7|Nicolás Otamendi|Argentina|
+ARG8|Enzo Fernández|Argentina|
+ARG9|Rodrigo De Paul|Argentina|
+ARG10|Alexis Mac Allister|Argentina|
+ARG11|Giovani Lo Celso|Argentina|
+ARG12|Ángel Di María|Argentina|
+ARG13|Foto Equipo|Argentina|
+ARG14|Julián Álvarez|Argentina|
+ARG15|Lautaro Martínez|Argentina|
+ARG16|Nicolás González|Argentina|
+ARG17|Paulo Dybala|Argentina|
+ARG18|Valentín Carboni|Argentina|
+ARG19|Alejandro Garnacho|Argentina|
+ARG20|Lionel Messi|Argentina|
+GHA1|Logo - Ghana|Ghana|F
+GHA2|Lawrence Ati-Zigi|Ghana|
+GHA3|Baba A. Rahman|Ghana|
+GHA4|Alexander Djiku|Ghana|
+GHA5|Daniel Amartey|Ghana|
+GHA6|Tariq Lamptey|Ghana|
+GHA7|Andy Yiadom|Ghana|
+GHA8|Mohammed Salisu|Ghana|
+GHA9|Elisha Owusu|Ghana|
+GHA10|Thomas Partey|Ghana|
+GHA11|Baba Iddrisu|Ghana|
+GHA12|Daniel-Kofi Kyereh|Ghana|
+GHA13|Foto Equipo|Ghana|
+GHA14|Andre Ayew|Ghana|
+GHA15|Jordan Ayew|Ghana|
+GHA16|Kudus Mohammed|Ghana|
+GHA17|Osman Bukari|Ghana|
+GHA18|Antoine Semenyo|Ghana|
+GHA19|Kamaldeen Sulemana|Ghana|
+GHA20|Iñaki Williams|Ghana|
+FRA1|Logo - Francia|Francia|F
+FRA2|Mike Maignan|Francia|
+FRA3|Alphonse Areola|Francia|
+FRA4|Theo Hernandez|Francia|
+FRA5|Jules Koundé|Francia|
+FRA6|William Saliba|Francia|
+FRA7|Dayot Upamecano|Francia|
+FRA8|Ibrahima Konaté|Francia|
+FRA9|Aurélien Tchouaméni|Francia|
+FRA10|Adrien Rabiot|Francia|
+FRA11|Eduardo Camavinga|Francia|
+FRA12|Youssouf Fofana|Francia|
+FRA13|Foto Equipo|Francia|
+FRA14|Ousmane Dembélé|Francia|
+FRA15|Marcus Thuram|Francia|
+FRA16|Kingsley Coman|Francia|
+FRA17|Antoine Griezmann|Francia|
+FRA18|Randal Kolo Muani|Francia|
+FRA19|Bradley Barcola|Francia|
+FRA20|Kylian Mbappé|Francia|
+COL1|Logo - Colombia|Colombia|F
+COL2|David Ospina|Colombia|
+COL3|Camilo Vargas|Colombia|
+COL4|Davinson Sánchez|Colombia|
+COL5|Yerry Mina|Colombia|
+COL6|Daniel Muñoz|Colombia|
+COL7|Johan Mojica|Colombia|
+COL8|Levin Castaño|Colombia|
+COL9|Wilmar Barrios|Colombia|
+COL10|Juan Cuadrado|Colombia|
+COL11|James Rodríguez|Colombia|
+COL12|Matheus Uribe|Colombia|
+COL13|Foto Equipo|Colombia|
+COL14|Jefferson Lerma|Colombia|
+COL15|Jhon Arias|Colombia|
+COL16|Luis Díaz|Colombia|
+COL17|Rafael Santos Borré|Colombia|
+COL18|Jhon Córdoba|Colombia|
+COL19|Cucho Hernández|Colombia|
+COL20|Falcao García|Colombia|
+CDR1|Logo - Congo DR|Congo DR|F
+CDR2|Joël Kiassumbua|Congo DR|
+CDR3|Lionel Mpasi|Congo DR|
+CDR4|Chancel Mbemba|Congo DR|
+CDR5|Silas Katompa|Congo DR|
+CDR6|Arthur Masuaku|Congo DR|
+CDR7|Marcel Tisserand|Congo DR|
+CDR8|Ngonda Muzinga|Congo DR|
+CDR9|Jean-Marc Makusu|Congo DR|
+CDR10|Chadrac Akolo|Congo DR|
+CDR11|Olivier Moke|Congo DR|
+CDR12|Yoane Wissa|Congo DR|
+CDR13|Foto Equipo|Congo DR|
+CDR14|Fiston Mayele|Congo DR|
+CDR15|Gabriel Zakuani|Congo DR|
+CDR16|Gael Kakuta|Congo DR|
+CDR17|Meschak Elia|Congo DR|
+CDR18|Paul-Jose Mpoku|Congo DR|
+CDR19|Cedric Bakambu|Congo DR|
+CDR20|Dieumerci Mbokani|Congo DR|
+CRO1|Logo - Croacia|Croacia|F
+CRO2|Dominik Livaković|Croacia|
+CRO3|Ivo Grbic|Croacia|
+CRO4|Josip Juranovic|Croacia|
+CRO5|Josip Sutalo|Croacia|
+CRO6|Duje Caleta-Car|Croacia|
+CRO7|Josko Gvardiol|Croacia|
+CRO8|Borna Sosa|Croacia|
+CRO9|Nikola Vlasic|Croacia|
+CRO10|Luka Modrić|Croacia|
+CRO11|Mateo Kovacic|Croacia|
+CRO12|Mario Pasalic|Croacia|
+CRO13|Foto Equipo|Croacia|
+CRO14|Ivan Perisic|Croacia|
+CRO15|Andrej Kramaric|Croacia|
+CRO16|Bruno Petkovic|Croacia|
+CRO17|Marko Livaja|Croacia|
+CRO18|Ivan Mišic|Croacia|
+CRO19|Lovro Majer|Croacia|
+CRO20|Ante Budimir|Croacia|
+ENG1|Logo - Inglaterra|Inglaterra|F
+ENG2|Jordan Pickford|Inglaterra|
+ENG3|Aaron Ramsdale|Inglaterra|
+ENG4|Kyle Walker|Inglaterra|
+ENG5|John Stones|Inglaterra|
+ENG6|Conor Coady|Inglaterra|
+ENG7|Kieran Trippier|Inglaterra|
+ENG8|Luke Shaw|Inglaterra|
+ENG9|Declan Rice|Inglaterra|
+ENG10|Jude Bellingham|Inglaterra|
+ENG11|Mason Mount|Inglaterra|
+ENG12|Phil Foden|Inglaterra|
+ENG13|Foto Equipo|Inglaterra|
+ENG14|Raheem Sterling|Inglaterra|
+ENG15|Marcus Rashford|Inglaterra|
+ENG16|Bukayo Saka|Inglaterra|
+ENG17|Jack Grealish|Inglaterra|
+ENG18|Ollie Watkins|Inglaterra|
+ENG19|Jarrod Bowen|Inglaterra|
+ENG20|Harry Kane|Inglaterra|
+NOR1|Logo - Noruega|Noruega|F
+NOR2|Ørjan Nyland|Noruega|
+NOR3|Kristoffer Ajer|Noruega|
+NOR4|Andreas Christensen|Noruega|
+NOR5|Leo Østigård|Noruega|
+NOR6|Fredrik Bjørkan|Noruega|
+NOR7|Birger Meling|Noruega|
+NOR8|Mathias Normann|Noruega|
+NOR9|Sander Berge|Noruega|
+NOR10|Martin Ødegaard|Noruega|
+NOR11|Morten Thorsby|Noruega|
+NOR12|Fredrik Aursnes|Noruega|
+NOR13|Foto Equipo|Noruega|
+NOR14|Jens Petter Hauge|Noruega|
+NOR15|Mohamed Elyounoussi|Noruega|
+NOR16|Antonio Nusa|Noruega|
+NOR17|Alexander Sørloth|Noruega|
+NOR18|Ola Solbakken|Noruega|
+NOR19|Kasper Dolberg|Noruega|
+NOR20|Erling Haaland|Noruega|
+PAN1|Logo - Panamá|Panamá|F
+PAN2|Luis Mejía|Panamá|
+PAN3|Fidel Escobar|Panamá|
+PAN4|Eric Davis|Panamá|
+PAN5|Andrés Andrade|Panamá|
+PAN6|José Córdoba|Panamá|
+PAN7|Edgardo Fariña|Panamá|
+PAN8|Jovani Welch|Panamá|
+PAN9|César Blackman|Panamá|
+PAN10|Abdiel Ayarza|Panamá|
+PAN11|Adalberto Carrasquilla|Panamá|
+PAN12|Cristian Martínez|Panamá|
+PAN13|Foto Equipo|Panamá|
+PAN14|Álvaro Murillo|Panamá|
+PAN15|José Fajardo|Panamá|
+PAN16|Ismael Díaz|Panamá|
+PAN17|Edgar Bárcenas|Panamá|
+PAN18|Rolando Blackburn|Panamá|
+PAN19|Gabriel Torres|Panamá|
+PAN20|Roderick Miller|Panamá|
+POR1|Logo - Portugal|Portugal|F
+POR2|Diogo Costa|Portugal|
+POR3|Rui Patrício|Portugal|
+POR4|João Cancelo|Portugal|
+POR5|Rúben Dias|Portugal|
+POR6|Pepe|Portugal|
+POR7|António Silva|Portugal|
+POR8|Nuno Mendes|Portugal|
+POR9|Bruno Fernandes|Portugal|
+POR10|Bernardo Silva|Portugal|
+POR11|João Palhinha|Portugal|
+POR12|Vitinha|Portugal|
+POR13|Foto Equipo|Portugal|
+POR14|Pedro Neto|Portugal|
+POR15|Rafael Leão|Portugal|
+POR16|João Félix|Portugal|
+POR17|Gonçalo Ramos|Portugal|
+POR18|Diogo Jota|Portugal|
+POR19|André Silva|Portugal|
+POR20|Cristiano Ronaldo|Portugal|
+KSA1|Logo - Arabia Saudita|Arabia Saudita|F
+KSA2|Mohammed Al-Owais|Arabia Saudita|
+KSA3|Nawaf Alaqidi|Arabia Saudita|
+KSA4|Ali Al-Bulaihi|Arabia Saudita|
+KSA5|Hassan Altambakti|Arabia Saudita|
+KSA6|Abdulelah Al-Amri|Arabia Saudita|
+KSA7|Sultan Al-Ghanam|Arabia Saudita|
+KSA8|Abdulellah Al-Malki|Arabia Saudita|
+KSA9|Mohamed Kanno|Arabia Saudita|
+KSA10|Sami Al-Najei|Arabia Saudita|
+KSA11|Yasser Al-Shahrani|Arabia Saudita|
+KSA12|Riyadh Sharahili|Arabia Saudita|
+KSA13|Foto Equipo|Arabia Saudita|
+KSA14|Haitham Asiri|Arabia Saudita|
+KSA15|Abdullah Al-Hamdan|Arabia Saudita|
+KSA16|Salem Al-Dawsari|Arabia Saudita|
+KSA17|Firas Al-Buraikan|Arabia Saudita|
+KSA18|Saleh Al-Shehri|Arabia Saudita|
+KSA19|Saud Abdulhamid|Arabia Saudita|
+KSA20|Ali Al-Hassan|Arabia Saudita|
+SEN1|Logo - Senegal|Senegal|F
+SEN2|Edouard Mendy|Senegal|
+SEN3|Seny Dieng|Senegal|
+SEN4|Kalidou Koulibaly|Senegal|
+SEN5|Abdou Diallo|Senegal|
+SEN6|Youssouf Sabaly|Senegal|
+SEN7|Pape Abou Cissé|Senegal|
+SEN8|Formose Mendy|Senegal|
+SEN9|Nampalys Mendy|Senegal|
+SEN10|Idrissa Gueye|Senegal|
+SEN11|Krepin Diatta|Senegal|
+SEN12|Ismaila Sarr|Senegal|
+SEN13|Foto Equipo|Senegal|
+SEN14|Pathé Ciss|Senegal|
+SEN15|Lamine Camara|Senegal|
+SEN16|Sadio Mané|Senegal|
+SEN17|Nicolas Jackson|Senegal|
+SEN18|Bamba Dieng|Senegal|
+SEN19|Iliman Ndiaye|Senegal|
+SEN20|Habib Diallo|Senegal|
+URU1|Logo - Uruguay|Uruguay|F
+URU2|Sergio Rochet|Uruguay|
+URU3|Sebastián Sosa|Uruguay|
+URU4|Ronald Araújo|Uruguay|
+URU5|José M. Giménez|Uruguay|
+URU6|Diego Godín|Uruguay|
+URU7|Nahitan Nández|Uruguay|
+URU8|Mathías Olivera|Uruguay|
+URU9|Lucas Torreira|Uruguay|
+URU10|Federico Valverde|Uruguay|
+URU11|Nicolás De La Cruz|Uruguay|
+URU12|Rodrigo Bentancur|Uruguay|
+URU13|Foto Equipo|Uruguay|
+URU14|Facundo Pellistri|Uruguay|
+URU15|Maximiliano Araújo|Uruguay|
+URU16|Darwin Núñez|Uruguay|
+URU17|Luis Suárez|Uruguay|
+URU18|Edinson Cavani|Uruguay|
+URU19|Giorgian De Arrascaeta|Uruguay|
+URU20|Agustín Canobbio|Uruguay|
+UZB1|Logo - Uzbekistán|Uzbekistán|F
+UZB2|Utkir Yusupov|Uzbekistán|
+UZB3|Farrukh Savfiev|Uzbekistán|
+UZB4|Sherzod Nasrullaev|Uzbekistán|
+UZB5|Umar Eshmurodov|Uzbekistán|
+UZB6|Husniddin Aliqulov|Uzbekistán|
+UZB7|Rustamjon Ashurmatov|Uzbekistán|
+UZB8|Khojiakbar Alijonov|Uzbekistán|
+UZB9|Abdukodir Khusanov|Uzbekistán|
+UZB10|Odiljon Hamrobekov|Uzbekistán|
+UZB11|Otabek Shukurov|Uzbekistán|
+UZB12|Jamshid Iskanderov|Uzbekistán|
+UZB13|Foto Equipo|Uzbekistán|
+UZB14|Azizbek Turgunboev|Uzbekistán|
+UZB15|Khojimat Erkinov|Uzbekistán|
+UZB16|Eldor Shomurodov|Uzbekistán|
+UZB17|Jasur Jalolov|Uzbekistán|
+UZB18|Umid Mekhmonov|Uzbekistán|
+UZB19|Shamsiddin Urinboev|Uzbekistán|
+UZB20|Oston Urunov|Uzbekistán|
+AUT1|Logo - Austria|Austria|F
+AUT2|Patrick Pentz|Austria|
+AUT3|Alexander Schlager|Austria|
+AUT4|Stefan Posch|Austria|
+AUT5|Phillipp Lienhart|Austria|
+AUT6|Gernot Trauner|Austria|
+AUT7|Christopher Trimmel|Austria|
+AUT8|David Alaba|Austria|
+AUT9|Florian Grillitsch|Austria|
+AUT10|Konrad Laimer|Austria|
+AUT11|Marcel Sabitzer|Austria|
+AUT12|Nicolas Seiwald|Austria|
+AUT13|Foto Equipo|Austria|
+AUT14|Xaver Schlager|Austria|
+AUT15|Patrick Wimmer|Austria|
+AUT16|Christoph Baumgartner|Austria|
+AUT17|Marko Arnautovic|Austria|
+AUT18|Michael Gregoritsch|Austria|
+AUT19|Andreas Weimann|Austria|
+AUT20|Florian Kainz|Austria|
+IOR1|Logo - Jordania|Jordania|F
+IOR2|Amer Shafi|Jordania|
+IOR3|Ahmad Al Rawi|Jordania|
+IOR4|Yazan Al Naimat|Jordania|
+IOR5|Ahmad Saad Al-Dein|Jordania|
+IOR6|Noor Mansour|Jordania|
+IOR7|Khaled Al Odat|Jordania|
+IOR8|Sami Al Naimat|Jordania|
+IOR9|Musa Al Tamari|Jordania|
+IOR10|Ibrahim Zabat|Jordania|
+IOR11|Baha Faisal|Jordania|
+IOR12|Ihsan Haddad|Jordania|
+IOR13|Foto Equipo|Jordania|
+IOR14|Saad Al Sheeb|Jordania|
+IOR15|Mohammad Abualnadi|Jordania|
+IOR16|Ibrahim Jabr|Jordania|
+IOR17|Mohammed Mazen|Jordania|
+IOR18|Mousa Taamari|Jordania|
+IOR19|Ahmad Dababneh|Jordania|
+IOR20|Ibrahim Sabra|Jordania|
+IRQ1|Logo - Irak|Irak|F
+IRQ2|Jalal Hassan|Irak|
+IRQ3|Mohammed Hameed|Irak|
+IRQ4|Ali Jasim|Irak|
+IRQ5|Rebin Sulaka|Irak|
+IRQ6|Ali Adnan|Irak|
+IRQ7|Ibrahim Beyat|Irak|
+IRQ8|Salam Shakir|Irak|
+IRQ9|Ahmed Ibrahim|Irak|
+IRQ10|Bashar Resan|Irak|
+IRQ11|Amjed Attwan|Irak|
+IRQ12|Hussein Ali|Irak|
+IRQ13|Foto Equipo|Irak|
+IRQ14|Mohanad Ali|Irak|
+IRQ15|Dawoud Hassan|Irak|
+IRQ16|Safaa Hadi|Irak|
+IRQ17|Emad Mohammed|Irak|
+IRQ18|Amir Al Ammari|Irak|
+IRQ19|Ayman Hussein|Irak|
+IRQ20|Alaa Abbas|Irak|`;
+
+// ─── PARSE ─────────────────────────────────────────────────────────────────
+const ALL = RAW.trim().split('\n').map(l => {
+  const p = l.split('|');
+  return { id: p[0], label: p[1], team: p[2], foil: p[3] === 'F' };
+});
+const TOTAL = ALL.length;
+const TEAMS = (() => {
+  const seen = new Set(), list = [];
+  ALL.forEach(s => { if (!seen.has(s.team)) { seen.add(s.team); list.push(s.team); } });
+  return list;
+})();
+
+// ─── STATE (localStorage) ──────────────────────────────────────────────────
+const SAVE_KEY = 'panini2026';
+let owned = {};
+try { owned = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}'); } catch(e) {}
+
+function save() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(owned)); } catch(e) {}
+}
+
+function getC(id) { return owned[id] || 0; }
+
+let filterMode = 'all';
+let searchQ = '';
+let selSticker = null;
+
+// ─── RENDER ────────────────────────────────────────────────────────────────
+function render() {
+  const ownedCount = Object.values(owned).filter(v => v >= 1).length;
+  const repCount = Object.values(owned).filter(v => v >= 2).length;
+  const pct = TOTAL > 0 ? Math.round(ownedCount / TOTAL * 100) : 0;
+
+  const groups = TEAMS.map(team => {
+    let st = ALL.filter(s => s.team === team);
+    if (searchQ) {
+      const q = searchQ.toLowerCase();
+      st = st.filter(s => s.id.toLowerCase().includes(q) || s.label.toLowerCase().includes(q) || s.team.toLowerCase().includes(q));
+    }
+    if (filterMode === 'missing') st = st.filter(s => getC(s.id) === 0);
+    if (filterMode === 'owned') st = st.filter(s => getC(s.id) >= 1);
+    if (filterMode === 'repeated') st = st.filter(s => getC(s.id) >= 2);
+    return { team, stickers: st };
+  }).filter(g => g.stickers.length > 0);
+
+  const tOwned = team => ALL.filter(s => s.team === team && getC(s.id) >= 1).length;
+  const tTotal = team => ALL.filter(s => s.team === team).length;
+
+  const stickerHTML = (s) => {
+    const c = getC(s.id);
+    const cls = [
+      's',
+      s.foil ? 'foil' : '',
+      c >= 2 ? 'repeated' : c === 1 ? 'owned' : ''
+    ].filter(Boolean).join(' ');
+    return `<div class="${cls}" data-id="${s.id}" title="${s.id} · ${s.label}">
+      ${s.foil ? '<span class="fd">✨</span>' : ''}
+      <span class="sc">${s.id}</span>
+      <span class="sn">${s.label}</span>
+      ${c >= 2 ? `<span class="bdg brep">×${c}</span>` : c === 1 ? '<span class="bdg bok">✓</span>' : ''}
+    </div>`;
+  };
+
+  const groupsHTML = groups.map(({ team, stickers }) => {
+    const to = tOwned(team), tt = tTotal(team);
+    const complete = to === tt && tt > 0;
+    return `<div class="ts${complete ? ' tc' : ''}">
+      <div class="th">
+        <span class="tn">${complete ? '✅ ' : ''}${team}</span>
+        <div class="tp">
+          <span>${to}/${tt}</span>
+          <div class="mb"><div class="mbf" style="width:${(to/tt*100).toFixed(0)}%"></div></div>
+        </div>
+      </div>
+      <div class="grid">${stickers.map(stickerHTML).join('')}</div>
+    </div>`;
+  }).join('');
+
+  const filters = [['all','Todas'],['missing','Faltan'],['owned','Tengo'],['repeated','Repetidas']];
+
+  document.getElementById('app').innerHTML = `
+    <header class="header">
+      <div class="logo">
+        <span style="font-size:1.4rem">⚽</span>
+        <div>
+          <div class="logo-title">PANINI FIFA 2026</div>
+          <div class="logo-sub">World Cup · ${TOTAL} figuritas</div>
+        </div>
+      </div>
+      <div class="hstats">
+        <div class="sp">Tengo <strong style="color:var(--green)">${ownedCount}</strong>/${TOTAL}</div>
+        <div class="sp">Rep. <strong style="color:var(--accent2)">${repCount}</strong></div>
+        <div class="sp">Faltan <strong style="color:var(--purple)">${TOTAL - ownedCount}</strong></div>
+      </div>
+    </header>
+    <div class="prog">
+      <div class="ptop"><span>Progreso del álbum</span><span>${pct}% completado</span></div>
+      <div class="ptrack"><div class="pfill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="toolbar">
+      <input class="si" id="searchInput" placeholder="🔍 Buscar código, jugador o equipo..." value="${searchQ}">
+      <div class="filters">
+        ${filters.map(([k,l]) => `<button class="fb${filterMode===k?' on':''}" data-filter="${k}">${l}</button>`).join('')}
+      </div>
+    </div>
+    <main class="main" id="mainContent">
+      ${groups.length === 0 ? '<div class="empty"><div style="font-size:2rem;margin-bottom:10px">🔎</div>Sin figuritas con ese filtro.</div>' : groupsHTML}
+    </main>
+    <div class="toast" id="toast">💾 Guardado</div>
+    ${selSticker ? renderModal() : ''}
+  `;
+
+  attachEvents();
+}
+
+function renderModal() {
+  const s = selSticker;
+  const c = getC(s.id);
+  const isOwned = c >= 1, isRep = c >= 2;
+  const statusCls = isRep ? 'rep' : isOwned ? 'ok' : 'miss';
+  const statusMsg = isRep
+    ? `🔁 Tienes ${c} copias · ${c-1} repetida${c-1>1?'s':''}`
+    : isOwned ? '✅ Pegada en el álbum' : '❌ Aún no la tienes';
+  return `<div class="overlay" id="overlay">
+    <div class="modal">
+      <div class="mc ${s.foil?'foil':'normal'}">${s.id}</div>
+      <div class="mt">${s.team}${s.foil?' · ✨ FOIL':''}</div>
+      <div class="mp">${s.label}</div>
+      <div class="sb ${statusCls}">${statusMsg}</div>
+      <div class="mbtns">
+        ${!isOwned ? '<button class="btn bg" id="btnOwn">✅  La tengo — pegar en álbum</button>' : ''}
+        ${isOwned ? '<button class="btn br" id="btnAdd">🔁  Tengo una repetida más</button>' : ''}
+        ${isOwned ? '<button class="btn bh" id="btnRem">↩  Quitar una copia</button>' : ''}
+        <button class="btn bh" id="btnClose">Cerrar</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function attachEvents() {
+  // Search
+  const si = document.getElementById('searchInput');
+  if (si) si.addEventListener('input', e => { searchQ = e.target.value; render(); });
+
+  // Filters
+  document.querySelectorAll('.fb').forEach(btn => {
+    btn.addEventListener('click', () => { filterMode = btn.dataset.filter; render(); });
+  });
+
+  // Stickers
+  document.querySelectorAll('.s').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      selSticker = ALL.find(s => s.id === id);
+      render();
+    });
+  });
+
+  // Modal buttons
+  const btnOwn = document.getElementById('btnOwn');
+  const btnAdd = document.getElementById('btnAdd');
+  const btnRem = document.getElementById('btnRem');
+  const btnClose = document.getElementById('btnClose');
+  const overlay = document.getElementById('overlay');
+
+  if (btnOwn) btnOwn.addEventListener('click', () => { owned[selSticker.id] = 1; save(); showToast(); selSticker = null; render(); });
+  if (btnAdd) btnAdd.addEventListener('click', () => { owned[selSticker.id] = (owned[selSticker.id] || 0) + 1; save(); showToast(); selSticker = null; render(); });
+  if (btnRem) btnRem.addEventListener('click', () => {
+    const c = (owned[selSticker.id] || 0) - 1;
+    if (c <= 0) delete owned[selSticker.id]; else owned[selSticker.id] = c;
+    save(); showToast(); selSticker = null; render();
+  });
+  if (btnClose) btnClose.addEventListener('click', () => { selSticker = null; render(); });
+  if (overlay) overlay.addEventListener('click', e => { if (e.target === overlay) { selSticker = null; render(); } });
+}
+
+render();
+</script>
+</body>
+</html>
